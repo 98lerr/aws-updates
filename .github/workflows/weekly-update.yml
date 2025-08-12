@@ -1,0 +1,79 @@
+name: Weekly AWS Updates
+
+on:
+  schedule:
+    # 毎週月曜日 JST 1:00 AM (UTC 16:00 日曜日)
+    - cron: '0 16 * * 0'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Generate AWS updates report
+      run: |
+        python aws_updates_summary_improved.py
+    
+    - name: Create docs directory for GitHub Pages
+      run: |
+        mkdir -p docs
+        cp output/*.md docs/ 2>/dev/null || true
+        
+    - name: Generate index.html for GitHub Pages
+      run: |
+        cat > docs/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="ja">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>AWS Updates Summary</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 40px; }
+                h1 { color: #232F3E; }
+                .report-list { list-style-type: none; padding: 0; }
+                .report-item { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+                .report-item a { text-decoration: none; color: #0073bb; font-weight: bold; }
+                .report-item a:hover { text-decoration: underline; }
+            </style>
+        </head>
+        <body>
+            <h1>AWS Updates Summary</h1>
+            <p>AWSの週次アップデート情報レポート</p>
+            <ul class="report-list">
+        EOF
+        
+        # 最新のレポートファイルをリストアップ
+        for file in docs/*.md; do
+          if [ -f "$file" ]; then
+            filename=$(basename "$file")
+            echo "                <li class=\"report-item\"><a href=\"$filename\">$filename</a></li>" >> docs/index.html
+          fi
+        done
+        
+        cat >> docs/index.html << 'EOF'
+            </ul>
+            <p><small>最終更新: $(date '+%Y-%m-%d %H:%M:%S JST')</small></p>
+        </body>
+        </html>
+        EOF
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        publish_branch: gh-pages
