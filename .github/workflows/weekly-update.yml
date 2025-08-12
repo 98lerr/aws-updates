@@ -22,152 +22,162 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install markdown
     
     - name: Generate AWS updates report
       run: |
         python aws_updates_summary_improved.py
     
-    - name: Create docs directory and convert to HTML
+    - name: Prepare docs for GitHub Pages
       run: |
         mkdir -p docs
+        cp output/*.md docs/ 2>/dev/null || true
         
-        # Convert markdown files to HTML
-        for file in output/*.md; do
-          if [ -f "$file" ]; then
-            filename=$(basename "$file" .md)
-            python3 << EOF
-import markdown
-import sys
-import re
-from datetime import datetime
-
-with open('$file', 'r', encoding='utf-8') as f:
-    content = f.read()
-
-# Remove filepath comment
-content = re.sub(r'^<!-- filepath:.*?-->', '', content, flags=re.MULTILINE)
-
-# Convert markdown to HTML
-md = markdown.Markdown(extensions=['tables', 'toc'])
-html_content = md.convert(content)
-
-# Create full HTML page
-html_page = '''<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Updates Summary - $filename</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #232F3E; border-bottom: 3px solid #FF9900; padding-bottom: 10px; }
-        h2 { color: #232F3E; margin-top: 30px; padding: 10px; background: #f8f9fa; border-left: 4px solid #FF9900; }
-        h3 { color: #0073bb; margin-top: 25px; }
-        h4 { color: #333; margin-top: 20px; }
-        .toc { background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; }
-        .toc ul { list-style-type: none; padding-left: 0; }
-        .toc li { margin: 5px 0; }
-        .toc a { text-decoration: none; color: #0073bb; }
-        .toc a:hover { text-decoration: underline; }
-        ul li { margin: 8px 0; }
-        strong { color: #d63384; }
-        a { color: #0073bb; }
-        a:hover { text-decoration: underline; }
-        hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
-        .stats { background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
-        .back-link { margin-bottom: 20px; }
-        .back-link a { background: #0073bb; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; }
-        .back-link a:hover { background: #005a9e; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="back-link">
-            <a href="index.html">← レポート一覧に戻る</a>
-        </div>
-        ''' + html_content + '''
-    </div>
-</body>
-</html>'''
-
-with open(f'docs/$filename.html', 'w', encoding='utf-8') as f:
-    f.write(html_page)
-EOF
-          fi
-        done
-        
-    - name: Generate index.html for GitHub Pages
-      run: |
         CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S JST')
-        cat > docs/index.html << 'INDEXEOF'
-        <!DOCTYPE html>
-        <html lang="ja">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>AWS Updates Summary</title>
-            <style>
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f5f5f5; }
-                .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-                h1 { color: #232F3E; text-align: center; margin-bottom: 10px; }
-                .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
-                .report-list { list-style-type: none; padding: 0; }
-                .report-item { margin: 15px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; transition: box-shadow 0.2s; }
-                .report-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-                .report-item a { text-decoration: none; color: #0073bb; font-weight: bold; font-size: 18px; }
-                .report-item a:hover { text-decoration: underline; }
-                .report-date { color: #666; font-size: 14px; margin-top: 5px; }
-                .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; }
-                .github-link { text-align: center; margin-top: 20px; }
-                .github-link a { color: #0073bb; text-decoration: none; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>🚀 AWS Updates Summary</h1>
-                <p class="subtitle">AWSの週次アップデート情報レポート</p>
-                <ul class="report-list">
-INDEXEOF
         
-        # HTMLファイルをリストアップ（最新順）
-        for file in $(ls -t docs/*.html 2>/dev/null | grep -v index.html); do
+        cat > docs/index.md << 'INDEXEND'
+        ---
+        layout: default
+        title: AWS Updates Summary
+        ---
+        
+        # 🚀 AWS Updates Summary
+        
+        AWSの週次アップデート情報レポート
+        
+        ## 📋 レポート一覧
+        
+        INDEXEND
+        
+        for file in $(ls -t docs/awsupdates_*.md 2>/dev/null); do
           if [ -f "$file" ]; then
             filename=$(basename "$file")
-            # ファイル名から日付を抽出
-            date_part=$(echo "$filename" | sed 's/awsupdates_\([0-9-]*\)_\([0-9-]*\).html/\1 〜 \2/')
-            cat >> docs/index.html << 'ITEMEOF'
-                    <li class="report-item">
-                        <a href="FILENAME_PLACEHOLDER">DATE_PLACEHOLDER</a>
-                        <div class="report-date">AWS週次アップデート情報</div>
-                    </li>
-ITEMEOF
-            # プレースホルダーを実際の値に置換
-            sed -i "s/FILENAME_PLACEHOLDER/$filename/g" docs/index.html
-            sed -i "s/DATE_PLACEHOLDER/$date_part/g" docs/index.html
+            date_part=$(echo "$filename" | sed 's/awsupdates_\([0-9-]*\)_\([0-9-]*\).md/\1 〜 \2/')
+            echo "- [$date_part]($filename)" >> docs/index.md
           fi
         done
         
-        cat >> docs/index.html << 'FOOTEREOF'
-                </ul>
-                <div class="footer">
-                    <p><small>最終更新: CURRENT_DATE_PLACEHOLDER</small></p>
-                </div>
-                <div class="github-link">
-                    <p><a href="https://github.com/98lerr/aws-updates" target="_blank">📁 GitHubリポジトリ</a></p>
-                </div>
-            </div>
-        </body>
-        </html>
-FOOTEREOF
+        echo "" >> docs/index.md
+        echo "---" >> docs/index.md
+        echo "" >> docs/index.md
+        echo "**最終更新**: $CURRENT_DATE" >> docs/index.md
+        echo "" >> docs/index.md
+        echo "[📁 GitHubリポジトリ](https://github.com/98lerr/aws-updates)" >> docs/index.md
+
+    - name: Create Jekyll config
+      run: |
+        cat > docs/_config.yml << 'CONFIGEND'
+        title: AWS Updates Summary
+        description: AWSの週次アップデート情報を自動収集・翻訳・分類
+        theme: minima
+        plugins:
+          - jekyll-feed
+          - jekyll-sitemap
         
-        # 日付プレースホルダーを置換
-        sed -i "s/CURRENT_DATE_PLACEHOLDER/$CURRENT_DATE/g" docs/index.html
-    
+        markdown: kramdown
+        highlighter: rouge
+        
+        github:
+          repository_name: aws-updates
+          repository_url: https://github.com/98lerr/aws-updates
+        
+        sass:
+          sass_dir: _sass
+          style: compressed
+        CONFIGEND
+
+    - name: Create custom CSS
+      run: |
+        mkdir -p docs/_sass
+        mkdir -p docs/assets/css
+        
+        cat > docs/_sass/custom.scss << 'CSSEND'
+        $aws-orange: #FF9900;
+        $aws-dark-blue: #232F3E;
+        $aws-light-blue: #0073bb;
+        
+        .site-header {
+          background-color: $aws-dark-blue;
+          border-bottom: 3px solid $aws-orange;
+        }
+        
+        .site-title, .site-title:visited {
+          color: white !important;
+        }
+        
+        h1 {
+          color: $aws-dark-blue;
+          border-bottom: 2px solid $aws-orange;
+          padding-bottom: 10px;
+        }
+        
+        h2 {
+          color: $aws-dark-blue;
+          background: #f8f9fa;
+          padding: 10px;
+          border-left: 4px solid $aws-orange;
+          margin-top: 30px;
+        }
+        
+        h3 {
+          color: $aws-light-blue;
+        }
+        
+        h4 {
+          color: #333;
+        }
+        
+        a {
+          color: $aws-light-blue;
+        }
+        
+        a:hover {
+          color: darken($aws-light-blue, 10%);
+        }
+        
+        strong {
+          color: #d63384;
+        }
+        
+        .post-content ul li {
+          margin: 8px 0;
+        }
+        
+        .stats {
+          background: #e7f3ff;
+          padding: 15px;
+          border-radius: 5px;
+          margin: 20px 0;
+        }
+        
+        .toc {
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 5px;
+          margin: 20px 0;
+        }
+        
+        .toc ul {
+          list-style-type: none;
+          padding-left: 0;
+        }
+        
+        .toc li {
+          margin: 5px 0;
+        }
+        CSSEND
+        
+        cat > docs/assets/css/style.scss << 'STYLEEND'
+        ---
+        ---
+        
+        @import "minima";
+        @import "custom";
+        STYLEEND
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs
         publish_branch: gh-pages
+        enable_jekyll: true
