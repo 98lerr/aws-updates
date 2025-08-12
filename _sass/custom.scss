@@ -1,0 +1,73 @@
+$aws-orange: #FF9900;
+$aws-dark-blue: #232F3E;
+$aws-light-blue: #0073bb;
+
+.site-header {
+  background-color: $aws-dark-blue;
+  border-bottom: 3px solid $aws-orange;
+}
+
+.site-title, .site-title:visited {
+  color: white !important;
+}
+
+h1 {
+  color: $aws-dark-blue;
+  border-bottom: 2px solid $aws-orange;
+  padding-bottom: 10px;
+}
+
+h2 {
+  color: $aws-dark-blue;
+  background: #f8f9fa;
+  padding: 10px;
+  border-left: 4px solid $aws-orange;
+  margin-top: 30px;
+}
+
+h3 {
+  color: $aws-light-blue;
+}
+
+h4 {
+  color: #333;
+}
+
+a {
+  color: $aws-light-blue;
+}
+
+a:hover {
+  color: darken($aws-light-blue, 10%);
+}
+
+strong {
+  color: #d63384;
+}
+
+.post-content ul li {
+  margin: 8px 0;
+}
+
+.stats {
+  background: #e7f3ff;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+.toc {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+.toc ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.toc li {
+  margin: 5px 0;
+}

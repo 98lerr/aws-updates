@@ -1,0 +1,17 @@
+title: AWS Updates Summary
+description: AWSの週次アップデート情報を自動収集・翻訳・分類
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+markdown: kramdown
+highlighter: rouge
+
+github:
+  repository_name: aws-updates
+  repository_url: https://github.com/98lerr/aws-updates
+
+sass:
+  sass_dir: _sass
+  style: compressed
