@@ -7,6 +7,8 @@ from collections import defaultdict
 from datetime import datetime, date, timedelta
 import os
 import html
+import time
+import random
 
 # サービスアイコンマッピング（絵文字を使用）
 SERVICE_ICONS = {
@@ -102,7 +104,26 @@ def generate_toc(categories):
             toc.append(f"{i+1}. [{SERVICE_ICONS[cat]} {cat}](#{cat.replace(' ', '-').replace('/', '').lower()})")
     return "\n".join(toc) + "\n\n"
 
+def safe_translate(translator, text, dest='ja', max_retries=3):
+    """安全な翻訳処理（リトライ機能付き）"""
+    for attempt in range(max_retries):
+        try:
+            # レート制限対策のための待機
+            time.sleep(random.uniform(0.5, 1.5))
+            result = translator.translate(text, dest=dest)
+            return result.text
+        except Exception as e:
+            print(f"翻訳エラー (試行 {attempt + 1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(random.uniform(2, 5))  # エラー時はより長く待機
+            else:
+                print(f"翻訳失敗、元のテキストを使用: {text[:50]}...")
+                return text
+    return text
+
 def main():
+    print("AWS更新情報の取得を開始します...")
+    
     feed_url = 'https://aws.amazon.com/about-aws/whats-new/recent/feed/'
     feed = feedparser.parse(feed_url)
     
@@ -122,16 +143,15 @@ def main():
     print(f"# AWS 更新情報 ({prev_sunday:%Y-%m-%d} ～ {prev_saturday:%Y-%m-%d})\n", file=out_file)
     print(f"先週の AWS サービスアップデート情報をまとめています。\n", file=out_file)
 
+    print("翻訳サービスを初期化中...")
     translator = Translator()
+    
     # 特定サービス名を英語のまま維持するための例外リスト
     exceptional_services = ['AWS Control Tower', 'AWS Glue', 'Amazon SageMaker', 'AWS Lambda']
     # 例外サービス名の日本語訳を取得してマッピング
     exceptions_map = {}
     for svc in exceptional_services:
-        try:
-            jp = translator.translate(svc, dest='ja').text
-        except Exception:
-            jp = svc
+        jp = safe_translate(translator, svc)
         exceptions_map[jp] = svc
 
     grouped = defaultdict(list)
@@ -208,10 +228,7 @@ def main():
                 importance_marker = "🔥 " if item['important'] else ""
                 
                 # タイトル見出し
-                try:
-                    title_ja = translator.translate(item['title'], dest='ja').text
-                except Exception:
-                    title_ja = item['title']
+                title_ja = safe_translate(translator, item['title'])
                 
                 # 翻訳後に例外サービス名を元の英語表記に戻す
                 for jp, orig in exceptions_map.items():
@@ -227,10 +244,7 @@ def main():
                 print(f"- **リンク**: [{item['link']}]({item['link']})", file=out_file)
                 
                 # 概要の翻訳
-                try:
-                    summary_ja = translator.translate(item['summary'], dest='ja').text
-                except Exception:
-                    summary_ja = item['summary']
+                summary_ja = safe_translate(translator, item['summary'])
                 
                 # 翻訳後に例外サービス名を元の英語表記に戻す
                 for jp, orig in exceptions_map.items():

@@ -18,14 +18,33 @@ jobs:
       with:
         python-version: 3.9
     
-    - name: Install dependencies
+    - name: Setup locale and install dependencies
       run: |
+        # Install Japanese locale
+        sudo apt-get update
+        sudo apt-get install -y locales language-pack-ja
+        sudo locale-gen ja_JP.UTF-8
+        sudo update-locale LANG=ja_JP.UTF-8
+        
+        # Install Python dependencies
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+      env:
+        LANG: ja_JP.UTF-8
+        LC_ALL: ja_JP.UTF-8
     
     - name: Generate AWS updates report
       run: |
+        # Set Japanese locale for the script
+        export LANG=ja_JP.UTF-8
+        export LC_ALL=ja_JP.UTF-8
+        
+        # Add delay to avoid rate limiting
         python aws_updates_summary_improved.py
+      env:
+        LANG: ja_JP.UTF-8
+        LC_ALL: ja_JP.UTF-8
+        PYTHONIOENCODING: utf-8
     
     - name: Prepare docs for GitHub Pages
       run: |
