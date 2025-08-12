@@ -1,2 +1,2 @@
-feedparser
-googletrans==4.0.0-rc1
+feedparser>=6.0.10
+googletrans>=4.0.0
