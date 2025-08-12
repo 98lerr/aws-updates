@@ -24,10 +24,6 @@ jobs:
         pip install -r requirements.txt
         pip install markdown
     
-    - name: Install markdown converter
-      run: |
-        pip install markdown
-    
     - name: Generate AWS updates report
       run: |
         python aws_updates_summary_improved.py
@@ -40,7 +36,7 @@ jobs:
         for file in output/*.md; do
           if [ -f "$file" ]; then
             filename=$(basename "$file" .md)
-            python -c "
+            python3 << EOF
 import markdown
 import sys
 import re
@@ -57,55 +53,55 @@ md = markdown.Markdown(extensions=['tables', 'toc'])
 html_content = md.convert(content)
 
 # Create full HTML page
-html_page = f'''<!DOCTYPE html>
-<html lang=\"ja\">
+html_page = '''<!DOCTYPE html>
+<html lang="ja">
 <head>
-    <meta charset=\"UTF-8\">
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-    <title>AWS Updates Summary - {filename}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Updates Summary - $filename</title>
     <style>
-        body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f5f5f5; }}
-        .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
-        h1 {{ color: #232F3E; border-bottom: 3px solid #FF9900; padding-bottom: 10px; }}
-        h2 {{ color: #232F3E; margin-top: 30px; padding: 10px; background: #f8f9fa; border-left: 4px solid #FF9900; }}
-        h3 {{ color: #0073bb; margin-top: 25px; }}
-        h4 {{ color: #333; margin-top: 20px; }}
-        .toc {{ background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; }}
-        .toc ul {{ list-style-type: none; padding-left: 0; }}
-        .toc li {{ margin: 5px 0; }}
-        .toc a {{ text-decoration: none; color: #0073bb; }}
-        .toc a:hover {{ text-decoration: underline; }}
-        ul li {{ margin: 8px 0; }}
-        strong {{ color: #d63384; }}
-        a {{ color: #0073bb; }}
-        a:hover {{ text-decoration: underline; }}
-        hr {{ border: none; border-top: 1px solid #ddd; margin: 20px 0; }}
-        .stats {{ background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }}
-        .back-link {{ margin-bottom: 20px; }}
-        .back-link a {{ background: #0073bb; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; }}
-        .back-link a:hover {{ background: #005a9e; }}
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #232F3E; border-bottom: 3px solid #FF9900; padding-bottom: 10px; }
+        h2 { color: #232F3E; margin-top: 30px; padding: 10px; background: #f8f9fa; border-left: 4px solid #FF9900; }
+        h3 { color: #0073bb; margin-top: 25px; }
+        h4 { color: #333; margin-top: 20px; }
+        .toc { background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; }
+        .toc ul { list-style-type: none; padding-left: 0; }
+        .toc li { margin: 5px 0; }
+        .toc a { text-decoration: none; color: #0073bb; }
+        .toc a:hover { text-decoration: underline; }
+        ul li { margin: 8px 0; }
+        strong { color: #d63384; }
+        a { color: #0073bb; }
+        a:hover { text-decoration: underline; }
+        hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+        .stats { background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .back-link { margin-bottom: 20px; }
+        .back-link a { background: #0073bb; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; }
+        .back-link a:hover { background: #005a9e; }
     </style>
 </head>
 <body>
-    <div class=\"container\">
-        <div class=\"back-link\">
-            <a href=\"index.html\">← レポート一覧に戻る</a>
+    <div class="container">
+        <div class="back-link">
+            <a href="index.html">← レポート一覧に戻る</a>
         </div>
-        {html_content}
+        ''' + html_content + '''
     </div>
 </body>
 </html>'''
 
-with open(f'docs/{filename}.html', 'w', encoding='utf-8') as f:
+with open(f'docs/$filename.html', 'w', encoding='utf-8') as f:
     f.write(html_page)
-" || echo "Conversion failed for $file"
+EOF
           fi
         done
         
     - name: Generate index.html for GitHub Pages
       run: |
         CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S JST')
-        cat > docs/index.html << EOF
+        cat > docs/index.html << 'INDEXEOF'
         <!DOCTYPE html>
         <html lang="ja">
         <head>
@@ -133,27 +129,30 @@ with open(f'docs/{filename}.html', 'w', encoding='utf-8') as f:
                 <h1>🚀 AWS Updates Summary</h1>
                 <p class="subtitle">AWSの週次アップデート情報レポート</p>
                 <ul class="report-list">
-EOF
+INDEXEOF
         
         # HTMLファイルをリストアップ（最新順）
-        for file in \$(ls -t docs/*.html 2>/dev/null | grep -v index.html); do
-          if [ -f "\$file" ]; then
-            filename=\$(basename "\$file")
+        for file in $(ls -t docs/*.html 2>/dev/null | grep -v index.html); do
+          if [ -f "$file" ]; then
+            filename=$(basename "$file")
             # ファイル名から日付を抽出
-            date_part=\$(echo "\$filename" | sed 's/awsupdates_\\([0-9-]*\\)_\\([0-9-]*\\).html/\\1 〜 \\2/')
-            cat >> docs/index.html << EOF
+            date_part=$(echo "$filename" | sed 's/awsupdates_\([0-9-]*\)_\([0-9-]*\).html/\1 〜 \2/')
+            cat >> docs/index.html << 'ITEMEOF'
                     <li class="report-item">
-                        <a href="\$filename">\$date_part</a>
+                        <a href="FILENAME_PLACEHOLDER">DATE_PLACEHOLDER</a>
                         <div class="report-date">AWS週次アップデート情報</div>
                     </li>
-EOF
+ITEMEOF
+            # プレースホルダーを実際の値に置換
+            sed -i "s/FILENAME_PLACEHOLDER/$filename/g" docs/index.html
+            sed -i "s/DATE_PLACEHOLDER/$date_part/g" docs/index.html
           fi
         done
         
-        cat >> docs/index.html << EOF
+        cat >> docs/index.html << 'FOOTEREOF'
                 </ul>
                 <div class="footer">
-                    <p><small>最終更新: \$CURRENT_DATE</small></p>
+                    <p><small>最終更新: CURRENT_DATE_PLACEHOLDER</small></p>
                 </div>
                 <div class="github-link">
                     <p><a href="https://github.com/98lerr/aws-updates" target="_blank">📁 GitHubリポジトリ</a></p>
@@ -161,7 +160,10 @@ EOF
             </div>
         </body>
         </html>
-EOF
+FOOTEREOF
+        
+        # 日付プレースホルダーを置換
+        sed -i "s/CURRENT_DATE_PLACEHOLDER/$CURRENT_DATE/g" docs/index.html
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
