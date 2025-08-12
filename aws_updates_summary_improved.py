@@ -104,21 +104,32 @@ def generate_toc(categories):
             toc.append(f"{i+1}. [{SERVICE_ICONS[cat]} {cat}](#{cat.replace(' ', '-').replace('/', '').lower()})")
     return "\n".join(toc) + "\n\n"
 
-def safe_translate(translator, text, dest='ja', max_retries=3):
+def safe_translate(translator, text, dest='ja', max_retries=2):
     """安全な翻訳処理（リトライ機能付き）"""
+    if not text or len(text.strip()) == 0:
+        return text
+        
     for attempt in range(max_retries):
         try:
-            # レート制限対策のための待機
-            time.sleep(random.uniform(0.5, 1.5))
+            # レート制限対策
+            if attempt > 0:
+                time.sleep(random.uniform(1, 3))
+            
             result = translator.translate(text, dest=dest)
-            return result.text
-        except Exception as e:
-            print(f"翻訳エラー (試行 {attempt + 1}/{max_retries}): {e}")
-            if attempt < max_retries - 1:
-                time.sleep(random.uniform(2, 5))  # エラー時はより長く待機
+            
+            # coroutineオブジェクトのチェック
+            if hasattr(result, 'text'):
+                return result.text
             else:
-                print(f"翻訳失敗、元のテキストを使用: {text[:50]}...")
+                print(f"翻訳結果が不正: {type(result)}")
                 return text
+                
+        except Exception as e:
+            print(f"翻訳エラー (試行 {attempt + 1}/{max_retries}): {str(e)[:100]}")
+            if attempt == max_retries - 1:
+                print(f"翻訳失敗、元テキスト使用: {text[:30]}...")
+                return text
+    
     return text
 
 def main():
@@ -144,15 +155,22 @@ def main():
     print(f"先週の AWS サービスアップデート情報をまとめています。\n", file=out_file)
 
     print("翻訳サービスを初期化中...")
-    translator = Translator()
+    try:
+        translator = Translator()
+        # テスト翻訳
+        test_result = safe_translate(translator, "test")
+        print(f"翻訳テスト結果: {test_result}")
+    except Exception as e:
+        print(f"翻訳サービス初期化エラー: {e}")
+        translator = None
     
     # 特定サービス名を英語のまま維持するための例外リスト
     exceptional_services = ['AWS Control Tower', 'AWS Glue', 'Amazon SageMaker', 'AWS Lambda']
-    # 例外サービス名の日本語訳を取得してマッピング
     exceptions_map = {}
-    for svc in exceptional_services:
-        jp = safe_translate(translator, svc)
-        exceptions_map[jp] = svc
+    if translator:
+        for svc in exceptional_services:
+            jp = safe_translate(translator, svc)
+            exceptions_map[jp] = svc
 
     grouped = defaultdict(list)
     service_count = defaultdict(int)
@@ -228,7 +246,10 @@ def main():
                 importance_marker = "🔥 " if item['important'] else ""
                 
                 # タイトル見出し
-                title_ja = safe_translate(translator, item['title'])
+                if translator:
+                    title_ja = safe_translate(translator, item['title'])
+                else:
+                    title_ja = item['title']
                 
                 # 翻訳後に例外サービス名を元の英語表記に戻す
                 for jp, orig in exceptions_map.items():
@@ -244,7 +265,10 @@ def main():
                 print(f"- **リンク**: [{item['link']}]({item['link']})", file=out_file)
                 
                 # 概要の翻訳
-                summary_ja = safe_translate(translator, item['summary'])
+                if translator:
+                    summary_ja = safe_translate(translator, item['summary'])
+                else:
+                    summary_ja = item['summary']
                 
                 # 翻訳後に例外サービス名を元の英語表記に戻す
                 for jp, orig in exceptions_map.items():
