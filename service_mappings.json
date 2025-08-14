@@ -3,10 +3,12 @@
     "AWS Parallel Computing Service": "コンピュート系",
     "EC2": "コンピュート系",
     "Lambda": "コンピュート系",
+    "Amazon Lightsail": "コンピュート系",
 
     "ECS": "コンテナ系",
     "EKS": "コンテナ系",
     "AWS Fargate": "コンテナ系",
+    "Amazon ECR": "コンテナ系",
 
     "CloudFront": "ネットワーク系",
     "VPC": "ネットワーク系",
@@ -68,6 +70,7 @@
     "Amazon Verified Permissions": "セキュリティ",
     "Amazon Cognito": "セキュリティ",
     "Cognito": "セキュリティ",
+    "AWS Private CA": "セキュリティ",
 
     "GuardDuty": "脅威検出サービス",
 
@@ -79,6 +82,8 @@
     "Amazon MWAA": "運用管理",
     "AWS Config": "運用管理",
     "Prometheus": "運用管理",
+    "Systems Manager": "運用管理",
+    "AWS Resource Explorer": "運用管理",
 
     "CodeCommit": "開発環境",
     "CodeBuild": "開発環境",
@@ -87,6 +92,7 @@
     "Amazon Connect": "コンタクトセンター",
 
     "MediaConvert": "メディア",
+    "AWS Deadline Cloud": "メディア",
 
     "Cost Explorer": "請求系",
     "AWS Invoice Summary": "請求系",
@@ -126,6 +132,8 @@
     "Network Firewall": "ネットワークファイアウォールサービス",
     "Amazon Keyspaces": "Apache Cassandra互換のマネージドNoSQLデータベースサービス",
     "AWS Fargate": "サーバーレスコンテナ実行サービス",
+    "Amazon Lightsail": "簡単仮想サーバーサービス",
+    "Amazon ECR": "コンテナレジストリサービス",
     "Amazon Nova Canvas": "入力に基づいて画像を生成するAIサービス",
     "Amazon QuickSight": "BIおよびデータ可視化サービス",
     "AWS Site-to-Site VPN": "AWSと外部ネットワークを接続するVPNサービス",
@@ -142,6 +150,10 @@
     "Amazon Application Recovery Controller": "アプリケーション復旧コントローラー",
     "ARC": "アプリケーション復旧コントローラー",
     "Amazon Kinesis Video Streams": "ビデオストリーミングサービス",
-    "Amazon KVS": "ビデオストリーミングサービス"
+    "Amazon KVS": "ビデオストリーミングサービス",
+    "Systems Manager": "システム管理サービス",
+    "AWS Private CA": "プライベート認証局サービス",
+    "AWS Deadline Cloud": "レンダリング管理サービス",
+    "AWS Resource Explorer": "リソース検索サービス"
   }
 }
