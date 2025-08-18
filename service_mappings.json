@@ -17,6 +17,7 @@
     "AWS Site-to-Site VPN": "ネットワーク系",
     "Network Firewall": "ネットワーク系",
     "AWS Direct Connect": "ネットワーク系",
+    "AWS Cloud Map": "ネットワーク系",
     "Amazon Application Recovery Controller": "ネットワーク系",
     "ARC": "ネットワーク系",
 
@@ -50,6 +51,7 @@
     "Bedrock": "AI/ML",
     "SageMaker": "AI/ML",
     "Amazon Q Developer": "AI/ML",
+    "Amazon Q Business": "AI/ML",
     "Amazon Lex": "AI/ML",
     "Amazon Nova Canvas": "AI/ML",
     "Amazon Nova Sonic": "AI/ML",
@@ -71,6 +73,7 @@
     "Amazon Cognito": "セキュリティ",
     "Cognito": "セキュリティ",
     "AWS Private CA": "セキュリティ",
+    "AWS Certificate Manager": "セキュリティ",
 
     "GuardDuty": "脅威検出サービス",
 
@@ -154,6 +157,9 @@
     "Systems Manager": "システム管理サービス",
     "AWS Private CA": "プライベート認証局サービス",
     "AWS Deadline Cloud": "レンダリング管理サービス",
-    "AWS Resource Explorer": "リソース検索サービス"
+    "AWS Resource Explorer": "リソース検索サービス",
+    "Amazon Q Business": "生成AIアシスタントサービス",
+    "AWS Cloud Map": "サービス検出サービス",
+    "AWS Certificate Manager": "SSL/TLS証明書管理サービス"
   }
 }
