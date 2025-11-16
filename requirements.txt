@@ -1,2 +1,2 @@
 feedparser>=6.0.10
-googletrans==3.1.0-alpha
+googletrans==4.0.2
