@@ -9,6 +9,7 @@ import os
 import html
 import time
 import random
+import asyncio
 
 # サービスアイコンマッピング（絵文字を使用）
 SERVICE_ICONS = {
@@ -104,8 +105,8 @@ def generate_toc(categories):
             toc.append(f"{i+1}. [{SERVICE_ICONS[cat]} {cat}](#{cat.replace(' ', '-').replace('/', '').lower()})")
     return "\n".join(toc) + "\n\n"
 
-def safe_translate(translator, text, dest='ja', max_retries=2):
-    """安全な翻訳処理（リトライ機能付き）"""
+async def safe_translate_async(translator, text, dest='ja', max_retries=2):
+    """安全な翻訳処理（リトライ機能付き・非同期版）"""
     if not text or len(text.strip()) == 0:
         return text
         
@@ -113,11 +114,10 @@ def safe_translate(translator, text, dest='ja', max_retries=2):
         try:
             # レート制限対策
             if attempt > 0:
-                time.sleep(random.uniform(1, 3))
+                await asyncio.sleep(random.uniform(1, 3))
             
-            result = translator.translate(text, dest=dest)
+            result = await translator.translate(text, dest=dest)
             
-            # coroutineオブジェクトのチェック
             if hasattr(result, 'text'):
                 return result.text
             else:
@@ -132,7 +132,7 @@ def safe_translate(translator, text, dest='ja', max_retries=2):
     
     return text
 
-def main():
+async def main_async():
     print("AWS更新情報の取得を開始します...")
     
     feed_url = 'https://aws.amazon.com/about-aws/whats-new/recent/feed/'
@@ -158,7 +158,7 @@ def main():
     try:
         translator = Translator()
         # テスト翻訳
-        test_result = safe_translate(translator, "test")
+        test_result = await safe_translate_async(translator, "test")
         print(f"翻訳テスト結果: {test_result}")
     except Exception as e:
         print(f"翻訳サービス初期化エラー: {e}")
@@ -169,7 +169,7 @@ def main():
     exceptions_map = {}
     if translator:
         for svc in exceptional_services:
-            jp = safe_translate(translator, svc)
+            jp = await safe_translate_async(translator, svc)
             exceptions_map[jp] = svc
 
     grouped = defaultdict(list)
@@ -247,7 +247,7 @@ def main():
                 
                 # タイトル見出し
                 if translator:
-                    title_ja = safe_translate(translator, item['title'])
+                    title_ja = await safe_translate_async(translator, item['title'])
                 else:
                     title_ja = item['title']
                 
@@ -266,7 +266,7 @@ def main():
                 
                 # 概要の翻訳
                 if translator:
-                    summary_ja = safe_translate(translator, item['summary'])
+                    summary_ja = await safe_translate_async(translator, item['summary'])
                 else:
                     summary_ja = item['summary']
                 
@@ -299,6 +299,9 @@ def main():
     # ファイルを閉じる
     out_file.close()
     print(f"更新情報を {filepath} に出力しました。")
+
+def main():
+    asyncio.run(main_async())
 
 if __name__ == '__main__':
     main()
