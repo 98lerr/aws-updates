@@ -35,12 +35,19 @@ jobs:
     
     - name: Generate AWS updates report
       run: |
-        # Set Japanese locale for the script
         export LANG=ja_JP.UTF-8
         export LC_ALL=ja_JP.UTF-8
-        
-        # Add delay to avoid rate limiting
         python aws_updates_summary_improved.py
+      env:
+        LANG: ja_JP.UTF-8
+        LC_ALL: ja_JP.UTF-8
+        PYTHONIOENCODING: utf-8
+    
+    - name: Generate AWS blog summary
+      run: |
+        export LANG=ja_JP.UTF-8
+        export LC_ALL=ja_JP.UTF-8
+        python aws_blog_summary.py
       env:
         LANG: ja_JP.UTF-8
         LC_ALL: ja_JP.UTF-8
@@ -56,14 +63,14 @@ jobs:
         cat > docs/index.md << 'INDEXEND'
         ---
         layout: default
-        title: AWS Updates Summary
+        title: AWS Updates & Blogs Summary
         ---
         
-        # 🚀 AWS Updates Summary
+        # 🚀 AWS Updates & Blogs Summary
         
-        AWSの週次アップデート情報レポート
+        AWSの週次アップデート情報とブログ記事を自動収集・翻訳・分類
         
-        ## 📋 レポート一覧
+        ## 📢 AWS Updates (公式アップデート)
         
         INDEXEND
         
@@ -71,6 +78,18 @@ jobs:
           if [ -f "$file" ]; then
             filename=$(basename "$file")
             date_part=$(echo "$filename" | sed 's/awsupdates_\([0-9-]*\)_\([0-9-]*\).md/\1 〜 \2/')
+            echo "- [$date_part]($filename)" >> docs/index.md
+          fi
+        done
+        
+        echo "" >> docs/index.md
+        echo "## 📝 AWS Blogs (ブログ記事)" >> docs/index.md
+        echo "" >> docs/index.md
+        
+        for file in $(ls -t docs/awsblogs_*.md 2>/dev/null); do
+          if [ -f "$file" ]; then
+            filename=$(basename "$file")
+            date_part=$(echo "$filename" | sed 's/awsblogs_\([0-9-]*\)_\([0-9-]*\).md/\1 〜 \2/')
             echo "- [$date_part]($filename)" >> docs/index.md
           fi
         done
@@ -85,8 +104,8 @@ jobs:
     - name: Create Jekyll config
       run: |
         cat > docs/_config.yml << 'CONFIGEND'
-        title: AWS Updates Summary
-        description: AWSの週次アップデート情報を自動収集・翻訳・分類
+        title: AWS Updates & Blogs Summary
+        description: AWSの週次アップデート情報とブログ記事を自動収集・翻訳・分類
         theme: minima
         plugins:
           - jekyll-feed

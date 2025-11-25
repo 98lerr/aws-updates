@@ -1,0 +1,28 @@
+# AWS ブログソース設定例
+# 
+# コメントアウトの使い方:
+# - 行頭に # を付けるとその行がコメントになります
+# - 特定のブログを無効化したい場合は、name と url の両方をコメントアウトしてください
+#
+# 例: 以下のブログは無効化されています
+# - name: 使用しないブログ
+#   url: https://example.com/feed/
+
+blogs:
+  # 主要ブログ - 常に有効にすることを推奨
+  - name: AWS公式ブログ
+    url: https://aws.amazon.com/jp/blogs/aws/feed/
+  
+  - name: アーキテクチャ
+    url: https://aws.amazon.com/jp/blogs/architecture/feed/
+  
+  # AI/ML関連 - 必要に応じてコメントアウト
+  - name: 機械学習
+    url: https://aws.amazon.com/jp/blogs/machine-learning/feed/
+  
+  # 以下は無効化の例
+  # - name: 量子コンピューティング
+  #   url: https://aws.amazon.com/jp/blogs/quantum-computing/feed/
+  
+  # - name: ロボティクス
+  #   url: https://aws.amazon.com/jp/blogs/robotics/feed/
