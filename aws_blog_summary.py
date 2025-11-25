@@ -67,7 +67,7 @@ async def generate_markdown_async(blog_data, start_date, end_date, translator):
             
             md += f"### {title_ja}\n"
             md += f"- **日付**: {post['date']}\n"
-            md += f"- **リンク**: {post['link']}\n"
+            md += f"- **リンク**: [{post['link']}]({post['link']})\n"
             md += f"- **概要**: {summary_ja}\n\n"
             md += "---\n\n"
     
