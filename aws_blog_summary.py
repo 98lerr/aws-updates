@@ -36,19 +36,23 @@ def get_prev_week_range(today=None):
     if today is None:
         today = date.today()
     # 0=Monday, 5=Saturday, 6=Sunday in weekday()
-    # Get the week (Sunday to Saturday)
+    # Get the week ending on the most recent Saturday
     
-    if today.weekday() == 6:
-        # Today is Sunday - get previous week
-        week_start = today - timedelta(days=7)
-        week_end = today - timedelta(days=1)
+    if today.weekday() == 5:
+        # Today is Saturday - get this week
+        week_end = today
     else:
-        # Monday-Saturday - get this week (find this week's Sunday and Saturday)
-        days_since_sunday = (today.weekday() + 1) % 7
-        week_start = today - timedelta(days=days_since_sunday)
-        # Saturday is 6 days after Sunday
-        week_end = week_start + timedelta(days=6)
+        # Sunday-Friday - get previous Saturday
+        if today.weekday() == 6:
+            # Sunday - yesterday was Saturday
+            week_end = today - timedelta(days=1)
+        else:
+            # Monday-Friday - get last Saturday
+            days_since_saturday = today.weekday() + 2
+            week_end = today - timedelta(days=days_since_saturday)
     
+    # Get the Sunday of that week
+    week_start = week_end - timedelta(days=6)
     return week_start, week_end
 
 def fetch_blog_posts(blog_url, start_date, end_date):
