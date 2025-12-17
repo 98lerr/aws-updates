@@ -66,8 +66,18 @@ def strip_html(html_text):
 def get_prev_week_range(today=None):
     if today is None:
         today = date.today()
-    current_sunday = today - timedelta(days=(today.weekday()+1) % 7)
-    prev_sunday = current_sunday - timedelta(days=7)
+    # 0=Monday, 6=Sunday in weekday()
+    # Get the most recent completed week (Sunday to Saturday)
+    days_since_sunday = (today.weekday() + 1) % 7
+    
+    if days_since_sunday == 0:
+        # Today is Sunday - current week just started, get previous completed week
+        prev_sunday = today - timedelta(days=7)
+    else:
+        # Monday-Saturday - current week is ongoing, get previous completed week
+        most_recent_sunday = today - timedelta(days=days_since_sunday)
+        prev_sunday = most_recent_sunday - timedelta(days=7)
+    
     prev_saturday = prev_sunday + timedelta(days=6)
     return prev_sunday, prev_saturday
 
