@@ -97,7 +97,11 @@ async def generate_markdown_async(blog_data, start_date, end_date, translator):
 
 async def main_async():
     blogs = load_blog_sources()
+    today = date.today()
     prev_sunday, prev_saturday = get_prev_week_range()
+    
+    print(f"Today: {today} ({today.strftime('%A')}), weekday={today.weekday()}")
+    print(f"Week range: {prev_sunday} to {prev_saturday}")
     
     translator = Translator()
     

@@ -157,6 +157,9 @@ async def main_async():
     today = date.today()
     prev_sunday, prev_saturday = get_prev_week_range(today)
     
+    print(f"Today: {today} ({today.strftime('%A')}), weekday={today.weekday()}")
+    print(f"Week range: {prev_sunday} to {prev_saturday}")
+    
     # 出力ファイル設定
     output_dir = os.path.join(os.path.dirname(__file__), 'output')
     os.makedirs(output_dir, exist_ok=True)
