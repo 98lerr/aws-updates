@@ -75,6 +75,57 @@ class TestAWSUpdatesSummaryImproved(unittest.TestCase):
         
         self.assertEqual(start, expected_start)
         self.assertEqual(end, expected_end)
+    
+    def test_get_prev_week_range_various_days(self):
+        """様々な曜日での前週範囲取得のテスト"""
+        # 日曜日: 前週を取得
+        sunday = date(2025, 12, 7)
+        start, end = get_prev_week_range(sunday)
+        self.assertEqual(start, date(2025, 11, 30))
+        self.assertEqual(end, date(2025, 12, 6))
+        
+        # 月曜日: 前週を取得
+        monday = date(2025, 12, 8)
+        start, end = get_prev_week_range(monday)
+        self.assertEqual(start, date(2025, 11, 30))
+        self.assertEqual(end, date(2025, 12, 6))
+        
+        # 土曜日: 前週を取得
+        saturday = date(2025, 12, 13)
+        start, end = get_prev_week_range(saturday)
+        self.assertEqual(start, date(2025, 11, 30))
+        self.assertEqual(end, date(2025, 12, 6))
+        
+        # 次の日曜日: 前週（12/7-12/13）を取得
+        next_sunday = date(2025, 12, 14)
+        start, end = get_prev_week_range(next_sunday)
+        self.assertEqual(start, date(2025, 12, 7))
+        self.assertEqual(end, date(2025, 12, 13))
+        
+        # 水曜日: 前週を取得
+        wednesday = date(2025, 12, 17)
+        start, end = get_prev_week_range(wednesday)
+        self.assertEqual(start, date(2025, 12, 7))
+        self.assertEqual(end, date(2025, 12, 13))
+    
+    def test_get_prev_week_range_always_7_days(self):
+        """前週範囲が常に7日間であることを確認"""
+        test_dates = [
+            date(2025, 12, 7),   # Sunday
+            date(2025, 12, 8),   # Monday
+            date(2025, 12, 10),  # Wednesday
+            date(2025, 12, 13),  # Saturday
+            date(2025, 12, 14),  # Sunday
+        ]
+        
+        for test_date in test_dates:
+            start, end = get_prev_week_range(test_date)
+            delta = (end - start).days
+            self.assertEqual(delta, 6, f"Failed for {test_date}: {start} to {end}")
+            # 開始日が日曜日であることを確認
+            self.assertEqual(start.weekday(), 6, f"Start day should be Sunday for {test_date}")
+            # 終了日が土曜日であることを確認
+            self.assertEqual(end.weekday(), 5, f"End day should be Saturday for {test_date}")
 
     def test_is_in_prev_week(self):
         """前週判定のテスト"""

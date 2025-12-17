@@ -2,7 +2,7 @@
 import unittest
 import json
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 import aws_blog_summary
@@ -26,6 +26,33 @@ class TestBlogSummary(unittest.TestCase):
         result = aws_blog_summary.trim_summary(long_text, 200)
         self.assertLessEqual(len(result), 200)
         self.assertTrue(result.endswith('...'))
+    
+    def test_get_prev_week_range(self):
+        """前週の日付範囲取得のテスト"""
+        # 日曜日: 前週を取得
+        sunday = date(2025, 12, 7)
+        start, end = aws_blog_summary.get_prev_week_range(sunday)
+        self.assertEqual(start, date(2025, 11, 30))
+        self.assertEqual(end, date(2025, 12, 6))
+        
+        # 月曜日: 前週を取得
+        monday = date(2025, 12, 8)
+        start, end = aws_blog_summary.get_prev_week_range(monday)
+        self.assertEqual(start, date(2025, 11, 30))
+        self.assertEqual(end, date(2025, 12, 6))
+        
+        # 水曜日: 前週を取得
+        wednesday = date(2025, 12, 17)
+        start, end = aws_blog_summary.get_prev_week_range(wednesday)
+        self.assertEqual(start, date(2025, 12, 7))
+        self.assertEqual(end, date(2025, 12, 13))
+        
+        # 範囲が常に7日間であることを確認
+        for test_date in [date(2025, 12, 7), date(2025, 12, 10), date(2025, 12, 14)]:
+            start, end = aws_blog_summary.get_prev_week_range(test_date)
+            self.assertEqual((end - start).days, 6)
+            self.assertEqual(start.weekday(), 6)  # Sunday
+            self.assertEqual(end.weekday(), 5)    # Saturday
     
     @patch('feedparser.parse')
     def test_fetch_blog_posts(self, mock_parse):
