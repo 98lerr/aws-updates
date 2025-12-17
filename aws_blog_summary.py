@@ -35,20 +35,21 @@ def trim_summary(text, limit=200):
 def get_prev_week_range(today=None):
     if today is None:
         today = date.today()
-    # 0=Monday, 6=Sunday in weekday()
-    # Get the most recent completed week (Sunday to Saturday)
-    days_since_sunday = (today.weekday() + 1) % 7
+    # 0=Monday, 5=Saturday, 6=Sunday in weekday()
+    # Get the week (Sunday to Saturday)
     
-    if days_since_sunday == 0:
-        # Today is Sunday - current week just started, get previous completed week
-        prev_sunday = today - timedelta(days=7)
+    if today.weekday() == 6:
+        # Today is Sunday - get previous week
+        week_start = today - timedelta(days=7)
+        week_end = today - timedelta(days=1)
     else:
-        # Monday-Saturday - current week is ongoing, get previous completed week
-        most_recent_sunday = today - timedelta(days=days_since_sunday)
-        prev_sunday = most_recent_sunday - timedelta(days=7)
+        # Monday-Saturday - get this week (find this week's Sunday and Saturday)
+        days_since_sunday = (today.weekday() + 1) % 7
+        week_start = today - timedelta(days=days_since_sunday)
+        # Saturday is 6 days after Sunday
+        week_end = week_start + timedelta(days=6)
     
-    prev_saturday = prev_sunday + timedelta(days=6)
-    return prev_sunday, prev_saturday
+    return week_start, week_end
 
 def fetch_blog_posts(blog_url, start_date, end_date):
     feed = feedparser.parse(blog_url)

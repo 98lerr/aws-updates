@@ -35,17 +35,17 @@ class TestBlogSummary(unittest.TestCase):
         self.assertEqual(start, date(2025, 11, 30))
         self.assertEqual(end, date(2025, 12, 6))
         
-        # 月曜日: 前週を取得
+        # 月曜日: 今週を取得
         monday = date(2025, 12, 8)
         start, end = aws_blog_summary.get_prev_week_range(monday)
-        self.assertEqual(start, date(2025, 11, 30))
-        self.assertEqual(end, date(2025, 12, 6))
-        
-        # 水曜日: 前週を取得
-        wednesday = date(2025, 12, 17)
-        start, end = aws_blog_summary.get_prev_week_range(wednesday)
         self.assertEqual(start, date(2025, 12, 7))
         self.assertEqual(end, date(2025, 12, 13))
+        
+        # 水曜日: 今週を取得
+        wednesday = date(2025, 12, 17)
+        start, end = aws_blog_summary.get_prev_week_range(wednesday)
+        self.assertEqual(start, date(2025, 12, 14))
+        self.assertEqual(end, date(2025, 12, 20))
         
         # 範囲が常に7日間であることを確認
         for test_date in [date(2025, 12, 7), date(2025, 12, 10), date(2025, 12, 14)]:

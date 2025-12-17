@@ -84,29 +84,29 @@ class TestAWSUpdatesSummaryImproved(unittest.TestCase):
         self.assertEqual(start, date(2025, 11, 30))
         self.assertEqual(end, date(2025, 12, 6))
         
-        # 月曜日: 前週を取得
+        # 月曜日: 今週を取得
         monday = date(2025, 12, 8)
         start, end = get_prev_week_range(monday)
-        self.assertEqual(start, date(2025, 11, 30))
-        self.assertEqual(end, date(2025, 12, 6))
+        self.assertEqual(start, date(2025, 12, 7))
+        self.assertEqual(end, date(2025, 12, 13))
         
-        # 土曜日: 前週を取得
+        # 土曜日: 今週を取得
         saturday = date(2025, 12, 13)
         start, end = get_prev_week_range(saturday)
-        self.assertEqual(start, date(2025, 11, 30))
-        self.assertEqual(end, date(2025, 12, 6))
+        self.assertEqual(start, date(2025, 12, 7))
+        self.assertEqual(end, date(2025, 12, 13))
         
-        # 次の日曜日: 前週（12/7-12/13）を取得
+        # 次の日曜日: 前週を取得
         next_sunday = date(2025, 12, 14)
         start, end = get_prev_week_range(next_sunday)
         self.assertEqual(start, date(2025, 12, 7))
         self.assertEqual(end, date(2025, 12, 13))
         
-        # 水曜日: 前週を取得
+        # 水曜日: 今週を取得
         wednesday = date(2025, 12, 17)
         start, end = get_prev_week_range(wednesday)
-        self.assertEqual(start, date(2025, 12, 7))
-        self.assertEqual(end, date(2025, 12, 13))
+        self.assertEqual(start, date(2025, 12, 14))
+        self.assertEqual(end, date(2025, 12, 20))
     
     def test_get_prev_week_range_always_7_days(self):
         """前週範囲が常に7日間であることを確認"""
