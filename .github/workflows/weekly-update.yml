@@ -2,8 +2,8 @@ name: Weekly AWS Updates
 
 on:
   schedule:
-    # 毎週日曜日 JST 1:00 AM (UTC 16:00 土曜日)
-    - cron: '0 16 * * 6'
+    # 毎週日曜日 JST 10:00 AM (UTC 1:00 AM)
+    - cron: '0 1 * * 0'
   workflow_dispatch: # 手動実行も可能
 
 jobs:

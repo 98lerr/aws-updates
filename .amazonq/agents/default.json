@@ -1,0 +1,45 @@
+{
+  "name": "q_ide_default",
+  "description": "Default agent configuration",
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "/Users/ryu/.nodebrew/current/bin/npx",
+      "disabled": false,
+      "timeout": 60000,
+      "args": [
+        "chrome-devtools-mcp@latest"
+      ]
+    }
+  },
+  "tools": [
+    "fs_read",
+    "execute_bash",
+    "fs_write",
+    "report_issue",
+    "use_aws",
+    "@chrome-devtools"
+  ],
+  "allowedTools": [
+    "fs_read",
+    "report_issue",
+    "use_aws",
+    "execute_bash",
+    "fs_write"
+  ],
+  "toolsSettings": {
+    "use_aws": {
+      "preset": "readOnly"
+    },
+    "execute_bash": {
+      "preset": "readOnly"
+    }
+  },
+  "resources": [
+    "file://AmazonQ.md",
+    "file://README.md",
+    "file://.amazonq/rules/**/*.md"
+  ],
+  "prompt": "",
+  "toolAliases": {},
+  "useLegacyMcpJson": true
+}

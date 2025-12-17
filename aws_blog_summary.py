@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import feedparser
 import yaml
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from pathlib import Path
 import re
 import html
@@ -32,14 +32,21 @@ def trim_summary(text, limit=200):
         return text[:limit-3] + '...'
     return text
 
-def fetch_blog_posts(blog_url, days=7):
+def get_prev_week_range(today=None):
+    if today is None:
+        today = date.today()
+    current_sunday = today - timedelta(days=(today.weekday()+1) % 7)
+    prev_sunday = current_sunday - timedelta(days=7)
+    prev_saturday = prev_sunday + timedelta(days=6)
+    return prev_sunday, prev_saturday
+
+def fetch_blog_posts(blog_url, start_date, end_date):
     feed = feedparser.parse(blog_url)
-    cutoff_date = datetime.now() - timedelta(days=days)
     posts = []
     
     for entry in feed.entries:
-        pub_date = datetime(*entry.published_parsed[:6])
-        if pub_date >= cutoff_date:
+        pub_date = datetime(*entry.published_parsed[:6]).date()
+        if start_date <= pub_date <= end_date:
             posts.append({
                 'title': entry.title,
                 'link': entry.link,
@@ -67,7 +74,7 @@ async def generate_markdown_async(blog_data, start_date, end_date, translator):
             
             md += f"### {title_ja}\n"
             md += f"- **日付**: {post['date']}\n"
-            md += f"- **リンク**: [{post['link']}]({post['link']})\n"
+            md += f"- **リンク**: {post['link']}\n"
             md += f"- **概要**: {summary_ja}\n\n"
             md += "---\n\n"
     
@@ -75,15 +82,14 @@ async def generate_markdown_async(blog_data, start_date, end_date, translator):
 
 async def main_async():
     blogs = load_blog_sources()
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=7)
+    prev_sunday, prev_saturday = get_prev_week_range()
     
     translator = Translator()
     
     blog_data = []
     for blog in blogs:
         print(f"Fetching {blog['name']}...")
-        posts = fetch_blog_posts(blog['url'])
+        posts = fetch_blog_posts(blog['url'], prev_sunday, prev_saturday)
         blog_data.append({
             'name': blog['name'],
             'posts': posts
@@ -92,15 +98,15 @@ async def main_async():
     print("Translating...")
     markdown = await generate_markdown_async(
         blog_data,
-        start_date.strftime('%Y-%m-%d'),
-        end_date.strftime('%Y-%m-%d'),
+        prev_sunday.strftime('%Y-%m-%d'),
+        prev_saturday.strftime('%Y-%m-%d'),
         translator
     )
     
     output_dir = Path('output')
     output_dir.mkdir(exist_ok=True)
     
-    filename = f"awsblogs_{start_date.strftime('%Y-%m-%d')}_{end_date.strftime('%Y-%m-%d')}.md"
+    filename = f"awsblogs_{prev_sunday.strftime('%Y-%m-%d')}_{prev_saturday.strftime('%Y-%m-%d')}.md"
     output_path = output_dir / filename
     
     with open(output_path, 'w', encoding='utf-8') as f:

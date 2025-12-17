@@ -262,7 +262,7 @@ async def main_async():
                 
                 # 項目の詳細をリストで出力
                 print(f"- **日付**: {item['date']}", file=out_file)
-                print(f"- **リンク**: [{item['link']}]({item['link']})", file=out_file)
+                print(f"- **リンク**: {item['link']}", file=out_file)
                 
                 # 概要の翻訳
                 if translator:

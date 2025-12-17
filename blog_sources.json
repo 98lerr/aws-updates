@@ -1,0 +1,188 @@
+{
+  "blogs": [
+    {
+      "name": "AWS公式ブログ",
+      "url": "https://aws.amazon.com/jp/blogs/aws/feed/"
+    },
+    {
+      "name": "アーキテクチャ",
+      "url": "https://aws.amazon.com/jp/blogs/architecture/feed/"
+    },
+    {
+      "name": "コンピュート",
+      "url": "https://aws.amazon.com/jp/blogs/compute/feed/"
+    },
+    {
+      "name": "コンテナ",
+      "url": "https://aws.amazon.com/jp/blogs/containers/feed/"
+    },
+    {
+      "name": "データベース",
+      "url": "https://aws.amazon.com/jp/blogs/database/feed/"
+    },
+    {
+      "name": "ネットワーク＆コンテンツ配信",
+      "url": "https://aws.amazon.com/jp/blogs/networking-and-content-delivery/feed/"
+    },
+    {
+      "name": "ストレージ",
+      "url": "https://aws.amazon.com/jp/blogs/storage/feed/"
+    },
+    {
+      "name": "機械学習",
+      "url": "https://aws.amazon.com/jp/blogs/machine-learning/feed/"
+    },
+    {
+      "name": "開発者",
+      "url": "https://aws.amazon.com/jp/blogs/developer/feed/"
+    },
+    {
+      "name": "DevOps",
+      "url": "https://aws.amazon.com/jp/blogs/devops/feed/"
+    },
+    {
+      "name": "マネジメント＆ガバナンス",
+      "url": "https://aws.amazon.com/jp/blogs/mt/feed/"
+    },
+    {
+      "name": "ゲームテック",
+      "url": "https://aws.amazon.com/jp/blogs/gametech/feed/"
+    },
+    {
+      "name": "AWS Insights",
+      "url": "https://aws.amazon.com/jp/blogs/aws-insights/feed/"
+    },
+    {
+      "name": "AWS Marketplace",
+      "url": "https://aws.amazon.com/jp/blogs/awsmarketplace/feed/"
+    },
+    {
+      "name": "APNブログ",
+      "url": "https://aws.amazon.com/jp/blogs/apn/feed/"
+    },
+    {
+      "name": "中小企業",
+      "url": "https://aws.amazon.com/jp/blogs/smb/feed/"
+    },
+    {
+      "name": "ビッグデータ",
+      "url": "https://aws.amazon.com/jp/blogs/big-data/feed/"
+    },
+    {
+      "name": "ビジネスインテリジェンス",
+      "url": "https://aws.amazon.com/jp/blogs/business-intelligence/feed/"
+    },
+    {
+      "name": "エンタープライズ戦略",
+      "url": "https://aws.amazon.com/jp/blogs/enterprise-strategy/feed/"
+    },
+    {
+      "name": "クラウド財務管理",
+      "url": "https://aws.amazon.com/jp/blogs/aws-cloud-financial-management/feed/"
+    },
+    {
+      "name": "コンタクトセンター",
+      "url": "https://aws.amazon.com/jp/blogs/contact-center/feed/"
+    },
+
+    {
+      "name": "デスクトップ＆アプリケーションストリーミング",
+      "url": "https://aws.amazon.com/jp/blogs/desktop-and-application-streaming/feed/"
+    },
+
+    {
+      "name": "モバイル",
+      "url": "https://aws.amazon.com/jp/blogs/mobile/feed/"
+    },
+    {
+      "name": "HPC",
+      "url": "https://aws.amazon.com/jp/blogs/hpc/feed/"
+    },
+    {
+      "name": "IBM & Red Hat",
+      "url": "https://aws.amazon.com/jp/blogs/ibm-redhat/feed/"
+    },
+    {
+      "name": "業界別",
+      "url": "https://aws.amazon.com/jp/blogs/industries/feed/"
+    },
+    {
+      "name": "インフラストラクチャ＆サステナビリティ",
+      "url": "https://aws.amazon.com/jp/blogs/infrastructure-sustainability/feed/"
+    },
+    {
+      "name": "インフラストラクチャ＆オートメーション",
+      "url": "https://aws.amazon.com/jp/blogs/infrastructure-and-automation/feed/"
+    },
+    {
+      "name": "IoT",
+      "url": "https://aws.amazon.com/jp/blogs/iot/feed/"
+    },
+    {
+      "name": "メディア",
+      "url": "https://aws.amazon.com/jp/blogs/media/feed/"
+    },
+    {
+      "name": "メッセージング＆ターゲティング",
+      "url": "https://aws.amazon.com/jp/blogs/messaging-and-targeting/feed/"
+    },
+    {
+      "name": "モダナイゼーション",
+      "url": "https://aws.amazon.com/jp/blogs/modernizing-with-aws/feed/"
+    },
+    {
+      "name": "移行＆モダナイゼーション",
+      "url": "https://aws.amazon.com/jp/blogs/migration-and-modernization/feed/"
+    },
+    {
+      "name": "マルチクラウド",
+      "url": "https://aws.amazon.com/jp/blogs/multicloud/feed/"
+    },
+    {
+      "name": ".NET",
+      "url": "https://aws.amazon.com/jp/blogs/dotnet/feed/"
+    },
+
+    {
+      "name": "オープンソース",
+      "url": "https://aws.amazon.com/jp/blogs/opensource/feed/"
+    },
+    {
+      "name": "パブリックセクター",
+      "url": "https://aws.amazon.com/jp/blogs/publicsector/feed/"
+    },
+    {
+      "name": "量子コンピューティング",
+      "url": "https://aws.amazon.com/jp/blogs/quantum-computing/feed/"
+    },
+    {
+      "name": "ロボティクス",
+      "url": "https://aws.amazon.com/jp/blogs/robotics/feed/"
+    },
+    {
+      "name": "SAP",
+      "url": "https://aws.amazon.com/jp/blogs/awsforsap/feed/"
+    },
+    {
+      "name": "セキュリティ",
+      "url": "https://aws.amazon.com/jp/security/blog/feed/"
+    },
+    {
+      "name": "空間コンピューティング",
+      "url": "https://aws.amazon.com/jp/blogs/spatial/feed/"
+    },
+
+    {
+      "name": "サプライチェーン",
+      "url": "https://aws.amazon.com/jp/blogs/supply-chain/feed/"
+    },
+    {
+      "name": "トレーニング＆認定",
+      "url": "https://aws.amazon.com/jp/blogs/training-and-certification/feed/"
+    },
+    {
+      "name": "Web3",
+      "url": "https://aws.amazon.com/jp/blogs/web3/feed/"
+    }
+  ]
+}

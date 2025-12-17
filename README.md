@@ -2,6 +2,10 @@
 
 AWSの週次アップデート情報を自動収集・翻訳・分類するツールです。
 
+## 📖 公開ページ
+
+https://98lerr.github.io/aws-updates/
+
 ## 機能
 
 - AWS公式RSSフィードから最新のアップデート情報を取得
@@ -45,7 +49,8 @@ python3 test_aws_updates_summary_improved.py
 
 ## GitHub Actions
 
-プッシュ時に自動でユニットテストが実行されます。
+- プッシュ時に自動でユニットテストが実行されます
+- 毎週日曜日 JST 10:00 AM に週次レポートが自動生成され、GitHub Pages に公開されます
 
 ## ライセンス
 
