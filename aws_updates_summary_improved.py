@@ -2,7 +2,7 @@
 import feedparser
 import json
 import re
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 from collections import defaultdict
 from datetime import datetime, date, timedelta
 import os
@@ -120,25 +120,25 @@ def generate_toc(categories):
             toc.append(f"{i+1}. [{SERVICE_ICONS[cat]} {cat}](#{cat.replace(' ', '-').replace('/', '').lower()})")
     return "\n".join(toc) + "\n\n"
 
-async def safe_translate_async(translator, text, dest='ja', max_retries=2):
+async def safe_translate_async(translator, text, max_retries=2):
     """安全な翻訳処理（リトライ機能付き・非同期版）"""
     if not text or len(text.strip()) == 0:
         return text
-        
+
     for attempt in range(max_retries):
         try:
             # レート制限対策
             if attempt > 0:
                 await asyncio.sleep(random.uniform(1, 3))
-            
-            result = await translator.translate(text, dest=dest)
-            
-            if hasattr(result, 'text'):
-                return result.text
+
+            result = await asyncio.to_thread(translator.translate, text)
+
+            if isinstance(result, str) and result.strip():
+                return result
             else:
-                print(f"翻訳結果が不正: {type(result)}")
+                print(f"翻訳結果が不正: {result!r}")
                 return text
-                
+
         except Exception as e:
             print(f"翻訳エラー (試行 {attempt + 1}/{max_retries}): {str(e)[:100]}")
             if attempt == max_retries - 1:
@@ -174,7 +174,7 @@ async def main_async():
 
     print("翻訳サービスを初期化中...")
     try:
-        translator = Translator()
+        translator = GoogleTranslator(source='auto', target='ja')
         # テスト翻訳
         test_result = await safe_translate_async(translator, "test")
         print(f"翻訳テスト結果: {test_result}")

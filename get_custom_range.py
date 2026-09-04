@@ -28,7 +28,7 @@ async def custom_range_async():
 
     print("翻訳サービスを初期化中...")
     try:
-        translator = Translator()
+        translator = GoogleTranslator(source='auto', target='ja')
         test_result = await safe_translate_async(translator, "test")
         print(f"翻訳テスト結果: {test_result}")
     except Exception as e:

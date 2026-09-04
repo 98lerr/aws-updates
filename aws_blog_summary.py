@@ -7,21 +7,21 @@ import re
 import html
 import asyncio
 import random
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 
 def load_blog_sources():
     with open('blog_sources.yaml', 'r', encoding='utf-8') as f:
         return yaml.safe_load(f)['blogs']
 
-async def safe_translate_async(translator, text, dest='ja', max_retries=2):
+async def safe_translate_async(translator, text, max_retries=2):
     if not text or len(text.strip()) == 0:
         return text
     for attempt in range(max_retries):
         try:
             if attempt > 0:
                 await asyncio.sleep(random.uniform(1, 3))
-            result = await translator.translate(text, dest=dest)
-            return result.text if hasattr(result, 'text') else text
+            result = await asyncio.to_thread(translator.translate, text)
+            return result if isinstance(result, str) and result.strip() else text
         except Exception as e:
             if attempt == max_retries - 1:
                 return text
@@ -103,7 +103,7 @@ async def main_async():
     print(f"Today: {today} ({today.strftime('%A')}), weekday={today.weekday()}")
     print(f"Week range: {prev_sunday} to {prev_saturday}")
     
-    translator = Translator()
+    translator = GoogleTranslator(source='auto', target='ja')
     
     blog_data = []
     for blog in blogs:

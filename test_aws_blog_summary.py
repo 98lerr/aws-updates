@@ -102,21 +102,15 @@ class TestBlogSummary(unittest.TestCase):
         """翻訳機能のテスト"""
         async def run_test():
             mock_translator = Mock()
-            mock_result = Mock()
-            mock_result.text = "翻訳されたテキスト"
-            
-            async def mock_translate(*args, **kwargs):
-                return mock_result
-            
-            mock_translator.translate = mock_translate
-            
+            mock_translator.translate = Mock(return_value="翻訳されたテキスト")
+
             result = await aws_blog_summary.safe_translate_async(
-                mock_translator, 
+                mock_translator,
                 "Test text"
             )
-            
+
             self.assertEqual(result, "翻訳されたテキスト")
-        
+
         asyncio.run(run_test())
     
     def test_safe_translate_async_empty_text(self):
@@ -132,9 +126,7 @@ class TestBlogSummary(unittest.TestCase):
         """Markdown生成のテスト"""
         async def run_test():
             mock_translator = Mock()
-            mock_result = Mock()
-            mock_result.text = "翻訳済み"
-            mock_translator.translate = Mock(return_value=mock_result)
+            mock_translator.translate = Mock(return_value="翻訳済み")
             
             blog_data = [
                 {

@@ -1,4 +1,4 @@
 feedparser>=6.0.10
-googletrans==4.0.2
+deep-translator>=1.11.4
 boto3>=1.26.0
 PyYAML>=6.0

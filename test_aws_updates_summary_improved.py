@@ -188,16 +188,16 @@ class TestAWSUpdatesSummaryImproved(unittest.TestCase):
     @patch('aws_updates_summary_improved.feedparser.parse')
     @patch('aws_updates_summary_improved.open', new_callable=mock_open)
     @patch('aws_updates_summary_improved.os.makedirs')
-    @patch('aws_updates_summary_improved.Translator')
+    @patch('aws_updates_summary_improved.GoogleTranslator')
     def test_main_function_structure(self, mock_translator, mock_makedirs, mock_file, mock_feedparser):
         """main関数の基本構造テスト"""
         # モックの設定
         mock_feed = MagicMock()
         mock_feed.entries = []
         mock_feedparser.return_value = mock_feed
-        
+
         mock_translator_instance = MagicMock()
-        mock_translator_instance.translate.return_value.text = "翻訳されたテキスト"
+        mock_translator_instance.translate.return_value = "翻訳されたテキスト"
         mock_translator.return_value = mock_translator_instance
         
         # main関数をインポートして実行
